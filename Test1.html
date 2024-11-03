@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MediaPipe Finger Counter</title>
+  <script src="https://cdn.jsdelivr.net/npm/@mediapipe/hands"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs"></script>
+  <style>
+    video {
+      transform: scaleX(-1); /* Flip the video for a mirror effect */
+    }
+  </style>
+</head>
+<body>
+  <h2>Finger Count: <span id="finger-count">0</span></h2>
+  <video id="webcam" autoplay playsinline></video>
+  <canvas id="output" style="position: absolute;"></canvas>
+  <script>
+    const videoElement = document.getElementById('webcam');
+    const fingerCountElement = document.getElementById('finger-count');
+    const canvasElement = document.getElementById('output');
+    const canvasCtx = canvasElement.getContext('2d');
+
+    async function setupCamera() {
+      const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+      videoElement.srcObject = stream;
+      return new Promise((resolve) => {
+        videoElement.onloadedmetadata = () => {
+          resolve(videoElement);
+        };
+      });
+    }
+
+    async function run() {
+      await setupCamera();
+      const hands = new Hands({
+        locateFile: (file) => {
+          return `https://cdn.jsdelivr.net/npm/@mediapipe/hands/${file}`;
+        }
+      });
+
+      hands.setOptions({
+        maxNumHands: 1,
+        modelComplexity: 1,
+        minDetectionConfidence: 0.5,
+        minTrackingConfidence: 0.5
+      });
+
+      hands.onResults(onResults);
+
+      videoElement.play();
+      const camera = new Camera(videoElement, {
+        onFrame: async () => {
+          await hands.send({ image: videoElement });
+        },
+        width: 640,
+        height: 480
+      });
+      camera.start();
+    }
+
+    function onResults(results) {
+      canvasCtx.clearRect(0, 0, canvasElement.width, canvasElement.height);
+      canvasCtx.drawImage(results.image, 0, 0, canvasElement.width, canvasElement.height);
+      
+      if (results.multiHandLandmarks) {
+        results.multiHandLandmarks.forEach((landmarks) => {
+          drawLandmarks(canvasCtx, landmarks);
+          const count = countFingers(landmarks);
+          fingerCountElement.innerText = count; // Update finger count display
+        });
+      } else {
+        fingerCountElement.innerText = 0; // No hands detected
+      }
+    }
+
+    function drawLandmarks(ctx, landmarks) {
+      ctx.fillStyle = 'red';
+      for (let i = 0; i < landmarks.length; i++) {
+        const x = landmarks[i].x * ctx.canvas.width;
+        const y = landmarks[i].y * ctx.canvas.height;
+        ctx.beginPath();
+        ctx.arc(x, y, 5, 0, 2 * Math.PI);
+        ctx.fill();
+      }
+    }
+
+    function countFingers(landmarks) {
+      let fingerCount = 0;
+
+      const fingerTips = [8, 12, 16, 20]; // Index, middle, ring, and pinky tips
+      const fingerBases = [7, 11, 15, 19]; // Base joints for those fingers
+
+      for (let i = 0; i < fingerTips.length; i++) {
+        if (landmarks[fingerTips[i]].y < landmarks[fingerBases[i]].y) {
+          fingerCount++;
+        }
+      }
+
+      const thumbTip = landmarks[4]; // Thumb tip
+      const thumbBase = landmarks[2]; // Thumb base
+
+      // Check if the thumb is extended
+      if (thumbTip.x < thumbBase.x && thumbTip.y < thumbBase.y) {
+        fingerCount++;
+      }
+
+      return fingerCount;
+    }
+
+    run();
+  </script>
+</body>
+</html>
+
