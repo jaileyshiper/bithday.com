@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Save Data</title>
+  <style>
+    body {
+      background-color: #ffe6f0;
+      font-family: 'Arial', sans-serif;
+      color: #333;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      height: 100vh;
+    }
+    .main, .add, .Withdraw, .history ,.eddit{
+      text-align: center;
+      background: #ffccdf;
+      border: 2px solid #ffa3c1;
+      border-radius: 15px;
+      padding: 20px;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+      max-width: 400px;
+      margin-top: 70px;
+    }
+    h1 {
+      color: #d9006c;
+      
+    }
+    .bubbly-button {
+      background-color: #ffa3c1;
+      color: #fff;
+      border: none;
+      border-radius: 25px;
+      padding: 10px 20px;
+      font-size: 16px;
+      cursor: pointer;
+      margin: 10px;
+      transition: all 0.3s ease;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+    }
+    .bubbly-button:hover {
+      background-color: #d9006c;
+      transform: translateY(-2px);
+    }
+    input[type="text"], input[type="date"] {
+      width: 80%;
+      padding: 10px;
+      margin: 10px 0;
+      border: 1px solid #ffa3c1;
+      border-radius: 10px;
+      outline: none;
+    }
+    .history {
+      display: none;
+      max-width: 400px;
+    }
+    .history ul {
+      list-style: none;
+      padding: 0;
+    }
+    .history li {
+      background: #fff;
+      margin: 5px 0;
+      padding: 10px;
+      border-radius: 10px;
+      border-left: 5px solid #ffa3c1;
+    }
+    .wait img {
+      margin-top: -0px;
+      max-width: 160px;
+      margin-bottom: 10px;
+    }
+    .main .wait img {
+      margin-top: -140px;
+      margin-left: -10px;
+      max-width: 160px;
+      margin-bottom: 10px;
+      position: absolute;
+      transform: translateX(-50%);
+      
+    }
+    img {
+      border-radius: 15px;
+    }
+    #edit {
+      margin-bottom: 20px;
+      margin-left: 250px;
+      width: 40px;
+    }
+    .progress-container {
+        margin-left: 75px;
+      position: relative;
+      width: 150px;
+      height: 150px;
+      border-radius: 50%;
+      background: conic-gradient(#007bff 0deg, #ddd 0deg);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .progress-container::before {
+      content: '';
+      position: absolute;
+      width: 140px;
+      height: 140px;
+      background: #ffccdf;
+      border-radius: 50%;
+    }
+    .progress-text {
+      position: absolute;
+      font-size: 20px;
+      font-weight: bold;
+      color: #333;
+      text-align: center;
+    }
+    .progress-text span {
+      display: block;
+      font-size: 16px;
+      color: #666;
+    }
+    .goal-container {
+    display: flex;
+    align-items: center;
+    gap: 5px; 
+    justify-content: center;
+}
+  </style>
+</head>
+<body>
+  <div class="main" id="main-div">
+    <img id="edit" src="icons8-créer-un-nouveau-48.png" alt="">
+   
+    <div class="progress-container" id="progress-container">
+        <div class="progress-text" id="progress-text">0<span>DH Saved</span></div>
+      </div>
+      <div class="wait">
+        <img src="téléchargement (14).gif" alt="Loading">
+      </div>
+      <div class="goal-container">
+        <h1>Our goal is: </h1>
+        <h1 id="goala">300</h1>
+        <h1>dh</h1>
+    </div>
+    <button class="bubbly-button" id="add-btn">+</button>
+    <button class="bubbly-button" id="withdraw-btn">-</button>
+    <button class="bubbly-button" id="history-btn">History</button>
+  </div>
+
+  <div class="add" id="add-div" style="display: none;">
+    <div class="wait">
+      <img src="téléchargement (12).gif" alt="Loading">
+    </div>
+    <input type="text" placeholder="Enter amount" id="amountInput">
+    <input type="date" id="dateInput">
+    <button class="bubbly-button" id="saveButton">Submit</button>
+  </div>
+
+  <div class="Withdraw" id="withdraw-div" style="display: none;">
+    <div class="wait">
+      <img src="téléchargement (11).gif" alt="Loading">
+    </div>
+    <input type="text" placeholder="Enter amount" id="amountInpu">
+    <input type="date" id="dateInpu">
+    <button class="bubbly-button" id="saveBut">Submit</button>
+  </div>
+
+  <div class="history" id="history-div">
+    <div class="wait">
+      <img src="Heart Love Sticker - Find & Share on GIPHY.gif" alt="History">
+    </div>
+    <h2>Transaction History</h2>
+    <ul id="history-list"></ul>
+  </div>
+  <div class="eddit" id="eddit-div" style="display: none;">
+   
+      <div class="wait">
+        <img src="téléchargement (10).gif" alt="Loading">
+      </div>
+      <input type="number" placeholder="Enter new goal" id="newGoalInput">
+      <button class="bubbly-button" id="saveGoalButton">Submit</button>
+ 
+  </div>
+  <script>
+    const addButton = document.getElementById('add-btn');
+    const withdrawButton = document.getElementById('withdraw-btn');
+    const historyButton = document.getElementById('history-btn');
+    const addDiv = document.getElementById('add-div');
+    const withdrawDiv = document.getElementById('withdraw-div');
+    const mainDiv = document.getElementById('main-div');
+    const historyDiv = document.getElementById('history-div');
+    const historyList = document.getElementById('history-list');
+    const goalaDiv = document.getElementById('goala');
+    const edditDiv = document.getElementById('eddit-div');
+    const edditbtn = document.getElementById('edit');
+    addButton.addEventListener('click', () => {
+      addDiv.style.display = 'block';
+      withdrawDiv.style.display = 'none';
+      historyDiv.style.display = 'none';
+      mainDiv.style.display = 'none';
+      edditDiv.style.display = 'none';
+    });
+
+   
+
+    withdrawButton.addEventListener('click', () => {
+      withdrawDiv.style.display = 'block';
+      addDiv.style.display = 'none';
+      historyDiv.style.display = 'none';
+      mainDiv.style.display = 'none';
+    });
+
+    historyButton.addEventListener('click', () => {
+      historyDiv.style.display = 'block';
+      addDiv.style.display = 'none';
+      withdrawDiv.style.display = 'none';
+      mainDiv.style.display = 'none';
+      updateHistory();
+    });
+
+    function updateHistory() {
+      historyList.innerHTML = '';
+      const existingData = JSON.parse(localStorage.getItem("savedData")) || [];
+      existingData.forEach(entry => {
+        const listItem = document.createElement("li");
+        listItem.textContent = `Amount: ${entry.amount || entry.amoun}, Date: ${entry.date || entry.dat}`;
+        historyList.appendChild(listItem);
+      });
+    }
+
+    document.getElementById("saveButton").addEventListener("click", () => {
+      saveData("amountInput", "dateInput");
+    });
+
+    document.getElementById("saveBut").addEventListener("click", () => {
+      saveData("amountInpu", "dateInpu", true);
+    });
+
+    function saveData(amountId, dateId, isWithdrawal = false) {
+      const amountField = document.getElementById(amountId);
+      const dateField = document.getElementById(dateId);
+      let amount = amountField.value;
+      const date = dateField.value;
+
+      if (!amount || !date) {
+        alert("Please enter both an amount and a date.");
+        return;
+      }
+
+      if (isWithdrawal) {
+        amount = "-" + amount;
+      }
+
+      const newData = { amount, date };
+      const existingData = JSON.parse(localStorage.getItem("savedData")) || [];
+      existingData.push(newData);
+      localStorage.setItem("savedData", JSON.stringify(existingData));
+      alert("Data saved!");
+
+      amountField.value = "";
+      dateField.value = "";
+    }
+    let goalAmount = parseFloat(goalaDiv.innerText); 
+    function updateProgressBar() {
+  // Get the goal from localStorage (if any)
+  const savedGoal = JSON.parse(localStorage.getItem("savedGoals"))?.slice(-1)[0]?.goal || 300; // Default to 300 if no goal is saved
+  const goalAmount = parseFloat(savedGoal);
+
+  // Get existing saved data for progress calculation
+  const existingData = JSON.parse(localStorage.getItem("savedData")) || [];
+  let totalSaved = existingData.reduce((sum, entry) => sum + parseFloat(entry.amount || 0), 0);
+  
+  // Calculate the percentage of progress
+  let percentage = Math.min((totalSaved / goalAmount) * 100, 100);
+
+  // Update the progress bar and progress text
+  const progressContainer = document.getElementById("progress-container");
+  const progressText = document.getElementById("progress-text");
+  
+  // Set the progress bar background as conic gradient
+  progressContainer.style.background = `conic-gradient(#d9006c ${percentage * 3.6}deg, #ddd ${percentage * 3.6}deg)`;
+  
+  // Update progress text
+  progressText.textContent = Math.round(percentage) + "%";
+}
+
+    updateProgressBar();
+    document.getElementById('edit').addEventListener('click', function() {
+ 
+        edditDiv.style.display =  'block' ;
+        mainDiv.style.display = 'none';
+});
+
+
+document.getElementById('saveGoalButton').addEventListener('click', function() {
+  const newGoalValue = document.getElementById('newGoalInput').value;
+  
+  if (newGoalValue) {
+    // Update the displayed goal
+    document.getElementById('goala').innerText = newGoalValue;
+    
+    // Optionally, store the new goal value in localStorage
+    const newGoalData = { goal: newGoalValue, date: new Date().toISOString() };
+    const existingGoals = JSON.parse(localStorage.getItem("savedGoals")) || [];
+    existingGoals.push(newGoalData);
+    localStorage.setItem("savedGoals", JSON.stringify(existingGoals));
+
+    // Close the input form
+    document.getElementById('change-goal-div').style.display = 'none';
+    
+    // Optionally, update the progress bar immediately
+    updateProgressBar();
+  } else {
+    alert("Please enter a valid goal amount.");
+  }
+});
+const savedGoal = JSON.parse(localStorage.getItem("savedGoals"))?.slice(-1)[0]?.goal || '300';
+document.getElementById('goala').innerText = savedGoal;
+updateProgressBar();
+  </script>
+</body>
+</html>
