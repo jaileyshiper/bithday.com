@@ -1,4 +1,4 @@
-@media (max-width:600px) {
+@media (width<=660px) {
   body {
     font-size: 14px;
     width: 412px;
@@ -13,6 +13,13 @@
   }
   .sideBar{
     display: none;
+  }
+  .pres{
+    height: 700px;
+    width: 600px;
+    text-align: center;
+    margin-top: 1800px;
+margin-bottom: 200px;
   }
 
   
@@ -176,14 +183,14 @@ body {
   opacity: 1;
   text-align: left;
 }
-@media (max-width:600px) {
+@media (width<=660px) {
   
 .v10_11 {
   width: 330px;
   color: rgba(255,255,255,1);
   position: absolute;
-  top: 1300px;
-  left: 50px;
+ /* top: 1300px;
+  left: 50px;*/
   font-family: Lato;
   font-weight: Bold;
   font-size: 40px;
@@ -205,14 +212,14 @@ body {
   opacity: 1;
   text-align: left;
 }
-@media (max-width:600px) {
+@media (width<=660px) {
   
   .v12_2 {
     width: 560px;
     color: rgba(249,130,44,1);
     position: absolute;
-    top: 1170px;
-    left: 50px;
+   /* top: 1170px;
+    left: 50px;*/
     font-family: Lakki Reddy;
     font-weight: Regular;
     font-size: 60px;
@@ -235,14 +242,14 @@ body {
 .v10_11p{
   display: none;
 }
-@media (max-width:600px) {
+@media (width<=660px) {
   
   .v10_11p {
     width: 30px;
     color: rgba(255,255,255,1);
     position: absolute;
-    top: 1100px;
-    left: 50px;
+  /*  top: 1100px;
+    left: 50px;*/
     font-family: Lato;
     font-weight: Bold;
     font-size: 50px;
@@ -267,14 +274,14 @@ body {
   opacity: 1;
   text-align: left;
 }
-@media (max-width:600px) {
+@media (width<=660px) {
   
   .v14_2 {
     width: 500px;
     color: rgb(255, 255, 255);
     position: absolute;
-    top: 1250px;
-    left: 50px;
+  /*  top: 1250px;
+    left: 50px;*/
     font-family: Lato;
     font-weight: Black;
     font-size: 40px;
@@ -309,7 +316,7 @@ body {
   opacity: 1;
   text-align: left;
 }
-@media (max-width:600px) {
+@media (width<=660px) {
   
   .v14_6 {
     width: 229px;
@@ -317,8 +324,8 @@ body {
     background: rgba(249,130,44,1);
     opacity: 1;
     position: absolute;
-    top: 1340px;
-    left: 206px;
+   /* top: 1340px;
+    left: 206px;*/
     border-top-left-radius: 20px;
     border-top-right-radius: 20px;
     border-bottom-left-radius: 20px;
@@ -329,8 +336,8 @@ body {
     width: 151px;
     color: rgba(255,255,255,1);
     position: absolute;
-    top: 1351px;
-    left: 246px;
+   /* top: 1351px;
+    left: 246px;*/
     font-family: Lato;
     font-weight: Bold;
     font-size: 22px;
